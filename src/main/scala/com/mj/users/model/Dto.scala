@@ -13,9 +13,9 @@ case class Experience(expID: String, memberID: String, position:Option[String], 
                         )
 
 //Education
-case class EducationRequest(memberID: String, school_name: String, field_of_study:String, degree: String, start_year:String, end_year:String, activities: String, created_date: String, updated_date:Option[String])
-case class Education(eduID: String, memberID: String, school_name: String, field_of_study:String, degree: String,
-                        start_year:String, end_year:String,activities: String, created_date: String, updated_date:Option[String])
+case class EducationRequest(memberID: String, school_name: Option[String], field_of_study:Option[String], degree: Option[String], start_year:Option[String], end_year:Option[String], activities: Option[String], created_date: Option[String], updated_date:Option[String])
+case class Education(eduID: String, memberID: String, school_name: Option[String], field_of_study:Option[String], degree: Option[String],
+                        start_year:Option[String], end_year:Option[String],activities: Option[String], created_date: Option[String], updated_date:Option[String])
 
 
 //Portfolio
