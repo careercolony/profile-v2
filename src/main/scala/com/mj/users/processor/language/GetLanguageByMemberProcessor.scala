@@ -20,11 +20,12 @@ class GetLanguageByMemberProcessor extends Actor with MessageConfig{
     case (memberID: String) => {
       val origin = sender()
 
-      val result = getLanguageDetailsByID(memberID).map(response =>
+      val result = getLanguageDetailsByID(memberID).map(response => {
         response match {
-          case List() => origin ! responseMessage("", noRecordFound, "")
-          case _ =>  origin ! response
+          case None => origin ! responseMessage("", noRecordFound, "")
+          case Some(resp) => origin ! resp
         }
+      }
       )
 
       result.recover {

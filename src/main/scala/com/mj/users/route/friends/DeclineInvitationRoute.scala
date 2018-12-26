@@ -1,4 +1,4 @@
-package com.mj.users.route.language
+package com.mj.users.route.friends
 
 import java.util.concurrent.TimeUnit
 
@@ -10,44 +10,42 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.mj.users.model.JsonRepo._
-import com.mj.users.model.{responseMessage, _}
+import com.mj.users.model.{Friend, responseMessage}
 import org.slf4j.LoggerFactory
 import spray.json._
 
 import scala.util.{Failure, Success}
 
-trait GetLanguageByMemberRoute {
-  val getLanguageByMemberUserLog = LoggerFactory.getLogger(this.getClass.getName)
+trait DeclineInvitationRoute {
+  val DeclineInvitationUserLog = LoggerFactory.getLogger(this.getClass.getName)
 
 
-  def getLanguageByMember(system: ActorSystem): Route = {
+  def DeclineInvitation(system: ActorSystem): Route = {
 
-    val getLanguageByMemberProcessor = system.actorSelection("/*/getLanguageByMemberProcessor")
+    val DeclineInvitationProcessor = system.actorSelection("/*/DeclineInvitationProcessor")
     implicit val timeout = Timeout(20, TimeUnit.SECONDS)
 
 
-    path("get-language" / "memberID" / Segment) { (memberID: String) =>
+    path("decline-invite" / "memberID" / Segment / "inviteeID" / Segment / "firstname" / Segment / "conn_type" / Segment) { (memberID: String, inviteeID: String, firstname: String, conn_type: String) =>
       get {
 
-        val userResponse = getLanguageByMemberProcessor ? memberID
+        val userResponse = DeclineInvitationProcessor ? Friend(memberID,inviteeID,firstname,Some(conn_type))
         onComplete(userResponse) {
           case Success(resp) =>
             resp match {
-              case s: Language => {
+              case s: responseMessage => if (s.successmsg.nonEmpty)
                 complete(HttpResponse(entity = HttpEntity(MediaTypes.`application/json`, s.toJson.toString)))
-              }
-              case s: responseMessage =>
+              else
                 complete(HttpResponse(status = BadRequest, entity = HttpEntity(MediaTypes.`application/json`, s.toJson.toString)))
               case _ => complete(HttpResponse(status = BadRequest, entity = HttpEntity(MediaTypes.`application/json`, responseMessage("", resp.toString, "").toJson.toString)))
             }
           case Failure(error) =>
-            getLanguageByMemberUserLog.error("Error is: " + error.getMessage)
+            DeclineInvitationUserLog.error("Error is: " + error.getMessage)
             complete(HttpResponse(status = BadRequest, entity = HttpEntity(MediaTypes.`application/json`, responseMessage("", error.getMessage, "").toJson.toString)))
         }
 
-
       }
-    }
 
+    }
   }
 }

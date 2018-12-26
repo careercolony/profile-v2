@@ -95,6 +95,14 @@ object Server extends App {
   val getSkillByMemberProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.skills.GetSkillsByMemberProcessor]), "getSkillByMemberProcessor")
   val deleteSkillProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.skills.DeleteSkillsProcessor]), "deleteSkillProcessor")
 
+  //friend
+  val invitationProcessorAcceptinvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.InvitationProcessor]), "invitationProcessor")
+  val acceptinvitation = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.AcceptInvitationProcessor]), "AcceptinvitationProcessor")
+  val declineInvitationRoute = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.DeclineInvitationProcessor]), "DeclineInvitationProcessor")
+  val followInvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.FollowInvitationProcessor]), "followInvitationProcessor")
+  val unFollowInvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.UnFollowInvitationProcessor]), "UnFollowInvitationProcessor")
+  val searchPeopleProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.SearchPeopleProcessor]), "searchPeopleProcessor")
+
   import system.dispatcher
 
   Http().bindAndHandle(RouteUtils.logRoute, "0.0.0.0", port)

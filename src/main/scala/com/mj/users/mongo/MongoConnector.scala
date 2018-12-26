@@ -19,7 +19,7 @@ object MongoConnector {
   implicit val ec: ExecutionContextExecutor =
     ExecutionContext.fromExecutor(Executors.newFixedThreadPool(50))
 
-  val db = futureConnection.map(_.database(dbName)).flatMap(f => f)
+  val db = futureConnection.flatMap(_.database(dbName))
   val db1 = futureConnection.flatMap(_.database(database_profile))
 
   //insert single document into collection
@@ -113,13 +113,45 @@ object MongoConnector {
   def update(futureCollection: Future[BSONCollection],
                        selector: BSONDocument,
                        update: BSONDocument,
-                       multi: Boolean = false): Future[String] = {
+                       multi: Boolean = false ,upsert : Boolean = false): Future[String] = {
+
     val updateResult = for {
       col <- futureCollection
-      uwr <- col.update(selector, update, multi = multi)
+      uwr <- col.update(selector, update, multi = multi,upsert = upsert)
     } yield {
+
       if (uwr.nModified > 0) "record updated successfully"
       else throw new Exception("Error while updating record in the data store.")
+
+    }
+    updateResult.recover {
+      case e: Throwable =>
+        throw new Exception("No records Updated")
+    }
+  }
+
+  /**
+    * update in collection
+    *
+    * @param futureCollection : Future[BSONCollection], collection to update
+    * @param selector         : BSONDocument, filter
+    * @param update           : BSONDocument, update info
+    * @param multi            : Boolean = false, update multi records
+    * @return Future[UpdateResult], return the update result
+    */
+  def updateDetails[T](futureCollection: Future[BSONCollection],
+             selector: BSONDocument,
+             update: T,
+             multi: Boolean = false ,upsert : Boolean = false)(
+                        implicit handler: BSONDocumentReader[T] with BSONDocumentWriter[T] with BSONHandler[BSONDocument, T]): Future[String] = {
+
+    val updateResult = for {
+      col <- futureCollection
+      uwr <- col.update(selector, update)
+    } yield {
+
+      if (uwr.nModified > 0) "record updated successfully"
+      else "No records Updated"
 
     }
     updateResult.recover {

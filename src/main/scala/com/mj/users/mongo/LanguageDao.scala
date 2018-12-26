@@ -16,16 +16,25 @@ object LanguageDao {
 
 
   def insertNewLanguage(userRequest: LanguageRequest): Future[Language] = {
-    for {
-      languageData <- Future {
-        Language(
-          userRequest.memberID,
-          userRequest.languageDetails
-        )
-      }
-      response <- insert[Language](languageCollection, languageData)
-    }
-      yield (response)
+
+   for{ languageDetails <-getLanguageDetailsByID(userRequest.memberID)
+     response <- languageDetails match {
+        case Some(lang) =>
+          val langDto =  (lang.languageDetails ++ userRequest.languageDetails)
+          val langNewDto = lang.copy(languageDetails  = langDto)
+          updateDetails[Language](languageCollection, {
+            BSONDocument("memberID" -> userRequest.memberID)}, langNewDto)
+        case _ =>
+          val languageData = Language(userRequest.memberID, userRequest.languageDetails)
+          insert[Language](languageCollection, languageData)
+        }
+
+        resp <- response match{
+          case _ => Future{Language(userRequest.memberID, userRequest.languageDetails)}
+        }
+   } yield(resp)
+
+
   }
 
   def updateLanguageDetails(lang: UpdateLanguage): Future[String] = {
@@ -36,14 +45,14 @@ object LanguageDao {
     update(languageCollection, {
       BSONDocument("memberID" -> lang.memberID ,
         "languageDetails.language" -> lang.languageDetails.language)
-    }, selector).map(resp => resp)
+    }, selector, upsert = true).map(resp => resp)
 
   }
 
 
-  def getLanguageDetailsByID(memberID: String): Future[List[Language]] = {
+  def getLanguageDetailsByID(memberID: String): Future[Option[Language]] = {
 
-    searchAll[Language](languageCollection,
+    search[Language](languageCollection,
       document("memberID" -> memberID))
   }
 

@@ -9,6 +9,7 @@ import com.mj.users.route.award._
 import com.mj.users.route.certification._
 import com.mj.users.route.education._
 import com.mj.users.route.experience._
+import com.mj.users.route.friends._
 import com.mj.users.route.language._
 import com.mj.users.route.portfolio._
 import com.mj.users.route.publication._
@@ -26,7 +27,9 @@ object RouteUtils extends NewExperienceRoute with UpdateExperienceRoute with Get
   with NewLanguageRoute with UpdateLanguageRoute with GetLanguageByMemberRoute with DeleteLanguageRoute
   with NewPublicationRoute with UpdatePublicationRoute with GetPublicationByMemberRoute with GetOnePublicationRoute with DeletePublicationRoute
   with NewWebProfileRoute with UpdateWebProfileRoute with GetWebProfileByMemberRoute with GetOneWebProfileRoute with DeleteWebProfileRoute
-  with NewSkillsRoute with UpdateSkillsRoute with GetSkillsByMemberRoute  with DeleteSkillsRoute {
+  with NewSkillsRoute with UpdateSkillsRoute with GetSkillsByMemberRoute  with DeleteSkillsRoute
+with AcceptInvitationRoute with DeclineInvitationRoute with FollowInvitationRoute with UnFollowInvitationRoute with SearchPeopleRoute
+with InvitationRoute{
 
   /*  createUsersCollection()
     createOnlinesCollection()*/
@@ -101,7 +104,8 @@ object RouteUtils extends NewExperienceRoute with UpdateExperienceRoute with Get
       newAward(system) ~ updateAward(system) ~ getAwardByMember(system) ~ GetOneAward(system) ~ DeleteAward(system) ~
       newPublication(system) ~ updatePublication(system) ~ getPublicationByMember(system) ~ GetOnePublication(system) ~ DeletePublication(system) ~
       newWebProfile(system) ~ updateWebProfile(system) ~ getWebProfileByMember(system) ~ GetOneWebProfile(system) ~ DeleteWebProfile(system) ~
-      newSkill(system) ~ updateSkill(system) ~ getSkillByMember(system)  ~ DeleteSkill(system)
+      newSkill(system) ~ updateSkill(system) ~ getSkillByMember(system)  ~ DeleteSkill(system) ~
+      invitation(system) ~ Acceptinvitation(system) ~ DeclineInvitation(system) ~ searchPeople(system) ~ followInvitation(system) ~ UnFollowInvitation(system)
   }
 
   def logRoute(implicit ec: ExecutionContext,
