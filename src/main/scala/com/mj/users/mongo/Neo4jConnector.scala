@@ -29,37 +29,11 @@ object Neo4jConnector {
 
   val driver = GraphDatabase.driver(neo4jUrl, AuthTokens.basic(neo4jUsername, neo4jPassword))
 
-  //insert single document into collection
-  /**
-    * @param futureCollection : Future[BSONCollection], collection to insert
-    * @param record           : T, record is BaseMongoObj
-    * @return Future[(id: String, errmsg: String)], inserted id string and errmsg
-    */
-  def connectNeo4j(script: String): Future[Int] = {
-
-    val insertResult = for {
-      session <- Future {
-        driver.session()
-      }
-      result <- Future {
-        session.run(script)
-      }
-    } yield {
-      println("result"+result.consume().counters().propertiesSet()  )
-      session.close()
-      result.consume().counters().relationshipsCreated() + result.consume().counters().relationshipsDeleted() + result.consume().counters().nodesCreated()
-
-    }
-    insertResult.recover {
-      case e: Throwable =>
-        println("e"+e.getMessage)
-        throw new Exception("Neo4j DB Error")
-    }
-  }
 
 
   def updateNeo4j(script: String): Future[Int] = {
 
+
     val insertResult = for {
       session <- Future {
         driver.session()
@@ -68,9 +42,8 @@ object Neo4jConnector {
         session.run(script)
       }
     } yield {
-      println("result"+result.consume().counters().propertiesSet()  )
       session.close()
-      result.consume().counters().propertiesSet()
+      result.consume().counters().relationshipsCreated() + result.consume().counters().relationshipsDeleted() + result.consume().counters().nodesCreated() +  result.consume().counters().propertiesSet()
 
     }
     insertResult.recover {

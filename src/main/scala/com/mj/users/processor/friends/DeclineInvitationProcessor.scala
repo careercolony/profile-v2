@@ -6,8 +6,8 @@ import akka.actor.Actor
 import akka.util.Timeout
 import com.mj.users.config.MessageConfig
 import com.mj.users.model.{Connections, Friend, responseMessage}
-import com.mj.users.mongo.FriendsDao.updateUserDetails
-import com.mj.users.mongo.Neo4jConnector.{connectNeo4j, updateNeo4j}
+import com.mj.users.mongo.FriendsDao.updateUserConnections
+import com.mj.users.mongo.Neo4jConnector.updateNeo4j
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -24,7 +24,7 @@ class DeclineInvitationProcessor extends Actor with MessageConfig {
 
       val result = updateNeo4j(script).map(response =>
         response match {
-          case count if count > 0 =>  updateUserDetails(Connections(friend.memberID,friend.inviteeID,friend.conn_type.get,"decline")).map(resp =>
+          case count if count > 0 =>  updateUserConnections(Connections(friend.memberID,friend.inviteeID,friend.conn_type.get,"decline")).map(resp =>
             origin ! responseMessage("", "", s"Declined request was successfully sent to ${friend.firstName}"))
           case 0 => origin ! responseMessage("", s"Error found for email : ${friend.firstName}", "")
         })

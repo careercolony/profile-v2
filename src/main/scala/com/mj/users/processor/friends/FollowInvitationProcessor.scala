@@ -7,7 +7,7 @@ import akka.util.Timeout
 import com.mj.users.config.MessageConfig
 import com.mj.users.model.{Connections, Friend, responseMessage}
 import com.mj.users.mongo.FriendsDao.updateUserDetails
-import com.mj.users.mongo.Neo4jConnector.connectNeo4j
+import com.mj.users.mongo.Neo4jConnector.updateNeo4j
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -22,7 +22,7 @@ class FollowInvitationProcessor extends Actor with MessageConfig {
       val origin = sender()
       val script = s"MATCH (a:users {memberID:'${followInvitationFriend.memberID}'} ), (b:users {memberID:'${followInvitationFriend.inviteeID}'} ) CREATE (a)-[r:FOLLOW {status:'active'}]->(b)"
 
-      val result = connectNeo4j(script).map(response =>
+      val result = updateNeo4j(script).map(response =>
         response match {
           case count if count > 0 => origin ! responseMessage("", "", s"You are now following ${followInvitationFriend.firstName}")
           case 0 => origin ! responseMessage("", s"Error found for email : ${followInvitationFriend.firstName}", "")
