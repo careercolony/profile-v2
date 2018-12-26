@@ -57,7 +57,7 @@ case class Friend(memberID : String , inviteeID : String , firstName : String , 
 //connections
 case class Connections(memberID : String , inviteeID : String ,conn_type : String , status : String )
 
-case class User(memberID: Int, firstname: String, lastname: String, email: String, avatar: String, degree:Int)
+case class User(memberID: String, firstname: String, lastname: String, email: String, avatar: String, degree:Int)
 
 //Response format for all apis
 case class responseMessage(uid: String, errmsg: String , successmsg : String)
