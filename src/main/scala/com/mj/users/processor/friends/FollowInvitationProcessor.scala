@@ -6,7 +6,7 @@ import akka.actor.Actor
 import akka.util.Timeout
 import com.mj.users.config.MessageConfig
 import com.mj.users.model.{Connections, Friend, responseMessage}
-import com.mj.users.mongo.FriendsDao.updateUserDetails
+
 import com.mj.users.mongo.Neo4jConnector.updateNeo4j
 
 import scala.concurrent.ExecutionContext.Implicits.global
