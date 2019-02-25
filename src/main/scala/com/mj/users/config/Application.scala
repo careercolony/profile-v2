@@ -14,7 +14,7 @@ object Application {
   val akkaPort: Int = configServer.getString("akkaPort").toInt
   val seedNodes: String = configServer.getString("seedNodes")
   val poolSize: Int = config.getInt("poolSize")
-
+  val version = config.getString("profileVersion")
   val configMongo: Config = config.getConfig("mongodb")
   val configMongoDbname: String = configMongo.getString("dbname")
   var configMongoUri: String = configMongo.getString("uri")
@@ -38,5 +38,8 @@ object Application {
   val parsedUri = MongoConnection.parseURI(mongoUri)
   val connection = parsedUri.map(driver.connection)
   val futureConnection = Future.fromTry(connection)
+
+  val active: String = config.getString("status.active")
+  val deleted: String = config.getString("status.deleted")
 
 }

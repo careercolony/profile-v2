@@ -6,7 +6,8 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson._
 
 import scala.concurrent.Future
-
+import com.mj.users.config.Application._
+import org.joda.time.DateTime
 object WebProfileDao {
 
 
@@ -20,11 +21,12 @@ object WebProfileDao {
   def insertNewWebProfile(userRequest: WebProfileRequest): Future[WebProfile] = {
     for {
       userData <- Future {
-        WebProfile(userRequest.memberID,
+        WebProfile(userRequest.memberID,active,
           BSONObjectID.generate().stringify,
           userRequest.profile_url,
-          userRequest.created_date ,
-          userRequest.updated_date
+          Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
+          None
+
         )
       }
       response <- insert[WebProfile](webProfileCollection, userData)
@@ -36,24 +38,22 @@ object WebProfileDao {
     val selector: BSONDocument = BSONDocument ( "$set" -> BSONDocument(
       "memberID" -> web.memberID,
       "profile_url" -> web.profile_url,
-      "created_date" -> web.created_date,
-      "updated_date" -> web.updated_date
-    ))
+      "updated_date" -> Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ"))    ))
 
     update(webProfileCollection, {
-      BSONDocument("webpID" -> web.webpID)
+      BSONDocument("webpID" -> web.webpID, "status" -> active)
     }, selector).map(resp => resp)
 
   }
 
   def getWebProfileDetailsByID(memberID: String): Future[List[WebProfile]] = {
     searchAll[WebProfile](webProfileCollection,
-      document("memberID" -> memberID))
+      document("memberID" -> memberID, "status" -> active))
   }
 
   def getOneWebProfileDetails(memberID: String, webpID : String): Future[Option[WebProfile]] = {
     search[WebProfile](webProfileCollection,
-      document("memberID" -> memberID , "webpID" -> webpID))
+      document("memberID" -> memberID , "webpID" -> webpID, "status" -> active))
   }
 
 

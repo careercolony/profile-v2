@@ -16,7 +16,7 @@ import com.mj.users.route.publication._
 import com.mj.users.route.webprofile._
 import com.mj.users.route.skills._
 import org.joda.time.DateTime
-
+import com.mj.users.config.Application._
 import scala.concurrent.{ExecutionContext, Future}
 
 object RouteUtils extends NewExperienceRoute with UpdateExperienceRoute with GetExperienceByMemberRoute with GetOneExperienceRoute with DeleteExperienceRoute
@@ -86,7 +86,7 @@ with InvitationRoute{
   def routeRoot(implicit ec: ExecutionContext,
                 system: ActorSystem,
                 materializer: ActorMaterializer) = {
-    routeLogic ~
+    pathPrefix("profile" / version) { routeLogic } ~
       extractRequest { request =>
         badRequest(request)
       }

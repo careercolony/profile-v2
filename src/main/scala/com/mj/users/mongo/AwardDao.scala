@@ -6,6 +6,8 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson._
 
 import scala.concurrent.Future
+import com.mj.users.config.Application._
+import org.joda.time.DateTime
 
 object AwardDao {
 
@@ -21,15 +23,15 @@ object AwardDao {
   def insertNewAward(userRequest: AwardRequest): Future[Award] = {
     for {
       experienceData <- Future {
-        Award(userRequest.memberID,
+        Award(userRequest.memberID,active ,
           BSONObjectID.generate().stringify,
           userRequest.award_title,
           userRequest.issuer ,
           userRequest.month ,
           userRequest.year,
           userRequest.description,
-          userRequest.created_date,
-          userRequest.updated_date
+          Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
+          None
         )
       }
       response <- insert[Award](awardCollection, experienceData)
@@ -45,24 +47,23 @@ object AwardDao {
       "month" -> awd.month,
       "year" -> awd.year,
       "description" -> awd.description,
-      "created_date" -> awd.created_date,
-      "updated_date" -> awd.updated_date
+      "updated_date" -> Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ"))
     ))
 
     update(awardCollection, {
-      BSONDocument("awID" -> awd.awID)
+      BSONDocument("awID" -> awd.awID, "status" -> active)
     }, selector).map(resp => resp)
 
   }
 
   def getAwardDetailsByID(memberID: String): Future[List[Award]] = {
     searchAll[Award](awardCollection,
-      document("memberID" -> memberID))
+      document("memberID" -> memberID , "status" -> active))
   }
 
   def getOneAwardDetails(memberID: String, awID : String): Future[Option[Award]] = {
     search[Award](awardCollection,
-      document("memberID" -> memberID , "awID" -> awID))
+      document("memberID" -> memberID , "awID" -> awID , "status" -> active))
   }
 
 

@@ -6,7 +6,8 @@ import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson._
 
 import scala.concurrent.Future
-
+import com.mj.users.config.Application._
+import org.joda.time.DateTime
 object FriendsDao {
 
   implicit def sessionStatusHandler = Macros.handler[SessionStatus]
@@ -33,7 +34,7 @@ object FriendsDao {
 
   def getUserDetailsByID(memberID: String): Future[Option[DBRegisterDto]] = {
     search[DBRegisterDto](userCollection,
-      document("_id" -> memberID))
+      document("_id" -> memberID, "status" -> active))
   }
 
 
@@ -53,7 +54,7 @@ object FriendsDao {
       val connectionDto = allDto :+ existingInviteeDto
       val userDto = userDetails.get.copy(registerDto = userDetails.get.registerDto.copy(connections = Some(connectionDto)))
       response <- updateDetails[DBRegisterDto](userCollection, {
-        BSONDocument("_id" -> conn.memberID)
+        BSONDocument("_id" -> conn.memberID, "status" -> active)
       }, userDto)
 
     } yield (response)

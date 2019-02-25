@@ -4,6 +4,8 @@ import com.mj.users.model._
 import com.mj.users.mongo.MongoConnector._
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson._
+import com.mj.users.config.Application._
+import org.joda.time.DateTime
 
 import scala.concurrent.Future
 
@@ -18,7 +20,7 @@ object EducationDao {
   def insertNewEducation(userRequest: EducationRequest): Future[Education] = {
     for {
       educationData <- Future {
-        Education(BSONObjectID.generate().stringify,
+        Education(BSONObjectID.generate().stringify,active,
           userRequest.memberID,
           userRequest.school_name,
           userRequest.field_of_study,
@@ -26,8 +28,8 @@ object EducationDao {
           userRequest.start_year,
           userRequest.end_year,
           userRequest.activities,
-          userRequest.created_date,
-          userRequest.updated_date
+          Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
+          None
         )
       }
       response <- insert[Education](educationCollection, educationData)
@@ -45,13 +47,12 @@ object EducationDao {
       "start_year" -> exp.start_year,
       "end_year" -> exp.end_year,
       "activities" -> exp.activities,
-      "created_date" -> exp.created_date,
-      "updated_date" -> exp.updated_date
+      "updated_date" -> Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ"))
 
     ))
 
     update(educationCollection, {
-      BSONDocument("eduID" -> exp.eduID)
+      BSONDocument("eduID" -> exp.eduID, "status" -> active)
     }, selector).map(resp => resp)
 
   }
@@ -61,12 +62,12 @@ object EducationDao {
 
   def getEducationDetailsByID(memberID: String): Future[List[Education]] = {
     searchAll[Education](educationCollection,
-      document("memberID" -> memberID))
+      document("memberID" -> memberID , "status" -> active))
   }
 
   def getOneEducationDetails(memberID: String, expID : String): Future[Option[Education]] = {
     search[Education](educationCollection,
-      document("memberID" -> memberID , "eduID" -> expID))
+      document("memberID" -> memberID , "eduID" -> expID , "status" -> active))
   }
 
 

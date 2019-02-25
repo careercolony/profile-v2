@@ -4,8 +4,9 @@ import com.mj.users.model._
 import com.mj.users.mongo.MongoConnector._
 import reactivemongo.api.collections.bson.BSONCollection
 import reactivemongo.bson._
-
+import org.joda.time.DateTime
 import scala.concurrent.Future
+import com.mj.users.config.Application._
 
 object SkillsDao {
 
