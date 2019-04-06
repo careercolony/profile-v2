@@ -41,7 +41,7 @@ object FriendsDao {
   }
 
 
-  def updateUserConnections(conn: Connections) = {
+  def updateUserConnections(conn: Connections , startUpFlag : Boolean = false) = {
 
 
     val result = for {
@@ -60,7 +60,10 @@ object FriendsDao {
       }
       val allDto = userDetails.get.registerDto.connections.getOrElse(List()).filter(invite_id => (invite_id.memberID != conn.inviteeID))
       val connectionDto = allDto :+ existingInviteeDto
-      val userDto = userDetails.get.copy(registerDto = userDetails.get.registerDto.copy(connections = Some(connectionDto)))
+      val userDto = if (startUpFlag)
+        userDetails.get.copy(registerDto = userDetails.get.registerDto.copy(connections = Some(connectionDto)),connections_flag = Some(true))
+      else
+         userDetails.get.copy(registerDto = userDetails.get.registerDto.copy(connections = Some(connectionDto)))
       response <- updateDetails[DBRegisterDto](userCollection, {
         BSONDocument("_id" -> conn.memberID, "status" -> active)
       }, userDto)

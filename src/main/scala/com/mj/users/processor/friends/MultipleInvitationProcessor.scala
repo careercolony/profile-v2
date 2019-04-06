@@ -25,18 +25,15 @@ class MultipleInvitationProcessor extends Actor with MessageConfig {
           val script = s"MATCH (a:users {memberID:'${invitationFriend.memberID}'} ), (b:users {memberID:'${friendID.memberID}'} ) CREATE (a)-[r:FRIEND {status:'pending', conn_type:'${friendID.conn_type}'}]->(b)"
           val result = updateNeo4j(script).map(response => response match {
             case count if count > 0 => {
-              println("here1")
-              updateUserConnections(Connections(invitationFriend.memberID, friendID.memberID, friendID.conn_type, "pending"))
+              updateUserConnections(Connections(invitationFriend.memberID, friendID.memberID, friendID.conn_type, "pending") ,true)
             }
             case 0 => {
-              println("here2")
               origin ! responseMessage("", s"Error found for email : ${friendID.memberID}", "")
             }
           })
 
           result.recover {
             case e: Throwable => {
-              println("here3")
               origin ! responseMessage("", e.getMessage, "")
             }
           }
