@@ -7,6 +7,7 @@ import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import scala.collection.mutable.MutableList
 
+case class MultipleInvitation(memberID: String, connections: Option[List[ConnectionsDto]])
 //Experience
 case class ExperienceRequest( memberID: String, position:Option[String], career_level:Option[String], description:Option[String], employer: Option[String], start_month:Option[String],
                               start_year:Option[String], end_month:Option[String], end_year:Option[String], current:Option[Boolean], industry: String)
@@ -63,25 +64,32 @@ case class User(memberID: String, firstname: String, lastname: String, email: St
 case class responseMessage(uid: String, errmsg: String , successmsg : String)
 
 
-case class DBRegisterDto(var _id : String , avatar: String,
-                         registerDto :RegisterDto,
-                         experience : Option[Experience] , /*experience collection*/
-                         education: Option[Education] , /*education collection*/
-                         Interest : Option[List[String]] ,   /*interest details*/
-                         userIP : Option[String] ,country : Option[String] ,interest_on_colony : Option[String] , employmentStatus : Option[String]  /*extra fields from second step page*/
-                         ,user_agent : Option[String],interest_flag: Option[Boolean]= Some(false), secondSignup_flag : Option[Boolean]= Some(false), email_verification_flag : Option[Boolean]= Some(false), /*user prfile flags*/
+case class DBRegisterDto(var _id: String, status : String ,avatar: String, created_date: Option[String], updated_date: Option[String],
+                         registerDto: RegisterDto,
+                         experience: Option[userExperience], /*experience collection*/
+                         education: Option[userEducation], /*education collection*/
+                         Interest: Option[List[String]], /*interest details*/
+                         userIP: Option[String], country: Option[String], interest_on_colony: Option[String], employmentStatus: Option[String] ,interest: Option[List[String]]/*extra fields from second step page*/
+                         , secondSignup_flag: Option[Boolean] = Some(false), email_verification_flag: Option[Boolean] = Some(false), /*user prfile flags*/
                          lastLogin: Long = 0, loginCount: Int = 0, sessionsStatus: List[SessionStatus] = List(), dateline: Long = System.currentTimeMillis()
-                        ) /*default value*/
+                        )
+
+case class userExperience(position: Option[String], career_level: Option[String], description: Option[String], employer: Option[String], start_month: Option[String],
+                          start_year: Option[String], end_month: Option[String], end_year: Option[String], current: Option[Boolean],
+                          industry: Option[String])
+
+case class userEducation(school_name: Option[String], field_of_study: Option[String], degree: Option[String],
+                         start_year: Option[String], end_year: Option[String], activities: Option[String])
 
 
 case class RegisterDto(email: String, nickname: String, password: String, repassword: String,
                        gender: Int, firstname: String, lastname: String, contact_info: Option[ContactInfo],
-                       location:Option[Location], connections: Option[List[connectionsDto]],
+                       location:Option[Location], connections: Option[List[ConnectionsDto]],
                        connection_requests: Option[List[String]],
                        friends_with_post:Option[List[String]],
                        user_agent : Option[String])
 
-case class connectionsDto (memberID : String , conn_type : String , status : String )
+case class ConnectionsDto (memberID : String , conn_type : String , status : String )
 
 case class SessionStatus(sessionid: String, newCount: Int)
 
@@ -90,6 +98,8 @@ case class Location(city: Option[String], state:Option[String], country: Option[
 case class ContactInfo(address: String, city: String, state: String, country: String, email:Option[String], mobile_phone: Option[String], birth_day:Option[Int], birth_month:Option[Int], birth_year:Option[Int], twitter_profile:Option[String], facebook_profile:Option[String])
 
 object JsonRepo extends DefaultJsonProtocol with SprayJsonSupport {
+  implicit val connectionsDtoFormats: RootJsonFormat[ConnectionsDto] = jsonFormat3(ConnectionsDto)
+  implicit val multipleInvitationRequestDtoFormats: RootJsonFormat[MultipleInvitation] = jsonFormat2(MultipleInvitation)
   implicit val experienceRequestDtoFormats: RootJsonFormat[ExperienceRequest] = jsonFormat11(ExperienceRequest)
   implicit val experienceResponseDtoFormats: RootJsonFormat[Experience] = jsonFormat15(Experience)
   implicit val educationRequestDtoFormats: RootJsonFormat[EducationRequest] = jsonFormat7(EducationRequest)

@@ -102,6 +102,7 @@ object Server extends App {
   val followInvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.FollowInvitationProcessor]), "followInvitationProcessor")
   val unFollowInvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.UnFollowInvitationProcessor]), "UnFollowInvitationProcessor")
   val searchPeopleProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.SearchPeopleProcessor]), "searchPeopleProcessor")
+  val multipleInvitationProcessor = system.actorOf(RoundRobinPool(poolSize).props(Props[processor.friends.MultipleInvitationProcessor]), "multipleInvitationProcessor")
 
   import system.dispatcher
 

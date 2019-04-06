@@ -29,7 +29,7 @@ object RouteUtils extends NewExperienceRoute with UpdateExperienceRoute with Get
   with NewWebProfileRoute with UpdateWebProfileRoute with GetWebProfileByMemberRoute with GetOneWebProfileRoute with DeleteWebProfileRoute
   with NewSkillsRoute with UpdateSkillsRoute with GetSkillsByMemberRoute  with DeleteSkillsRoute
 with AcceptInvitationRoute with DeclineInvitationRoute with FollowInvitationRoute with UnFollowInvitationRoute with SearchPeopleRoute
-with InvitationRoute{
+with InvitationRoute with MultipleInvitationRoute {
 
   /*  createUsersCollection()
     createOnlinesCollection()*/
@@ -105,7 +105,7 @@ with InvitationRoute{
       newPublication(system) ~ updatePublication(system) ~ getPublicationByMember(system) ~ GetOnePublication(system) ~ DeletePublication(system) ~
       newWebProfile(system) ~ updateWebProfile(system) ~ getWebProfileByMember(system) ~ GetOneWebProfile(system) ~ DeleteWebProfile(system) ~
       newSkill(system) ~ updateSkill(system) ~ getSkillByMember(system)  ~ DeleteSkill(system) ~
-      invitation(system) ~ Acceptinvitation(system) ~ DeclineInvitation(system) ~ searchPeople(system) ~ followInvitation(system) ~ UnFollowInvitation(system)
+      invitation(system) ~ Acceptinvitation(system) ~ DeclineInvitation(system) ~ searchPeople(system) ~ followInvitation(system) ~ UnFollowInvitation(system) ~ multipleInvitation(system)
   }
 
   def logRoute(implicit ec: ExecutionContext,
