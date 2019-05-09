@@ -15,6 +15,9 @@ import spray.json._
 import com.mj.users.model.Friend
 import scala.util.{Failure, Success}
 import akka.pattern.ask
+import com.mj.users.mongo.KafkaAccess
+import scala.util.{Failure, Success}
+import com.mj.users.config.Application._
 
 trait InvitationRoute {
   val invitationUserLog = LoggerFactory.getLogger(this.getClass.getName)
@@ -35,6 +38,7 @@ trait InvitationRoute {
             resp match {
               case s: responseMessage => if (s.successmsg.nonEmpty)
                 complete(HttpResponse(entity = HttpEntity(MediaTypes.`application/json`, s.toJson.toString)))
+                //sendInvitationToKafka(s.toJson.toString,invitationTopic)
               else
                 complete(HttpResponse(status = BadRequest, entity = HttpEntity(MediaTypes.`application/json`, s.toJson.toString)))
               case _ => complete(HttpResponse(status = BadRequest, entity = HttpEntity(MediaTypes.`application/json`, responseMessage("", resp.toString, "").toJson.toString)))
@@ -49,3 +53,5 @@ trait InvitationRoute {
     }
   }
 }
+
+

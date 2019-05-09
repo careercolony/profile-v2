@@ -11,12 +11,14 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.mj.users.model.JsonRepo._
 import com.mj.users.model.{responseMessage, _}
+import com.mj.users.mongo.KafkaAccess
 import org.slf4j.LoggerFactory
 import spray.json._
+import com.mj.users.config.Application._
 
 import scala.util.{Failure, Success}
 
-trait NewExperienceRoute {
+trait NewExperienceRoute extends KafkaAccess {
   val newExperienceUserLog = LoggerFactory.getLogger(this.getClass.getName)
 
 
@@ -35,6 +37,7 @@ trait NewExperienceRoute {
             case Success(resp) =>
               resp match {
                 case s: Experience => {
+                  sendToKafka(s.toJson.toString, experienceTopic)
                   complete(HttpResponse(entity = HttpEntity(MediaTypes.`application/json`, s.toJson.toString)))
                 }
                 case s: responseMessage =>

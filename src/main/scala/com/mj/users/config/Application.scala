@@ -30,6 +30,11 @@ object Application {
   val kongAdminURL = config.getString("kong.admin.url")
   val kongExpirationTime = config.getInt("kong.expiration.time")
 
+  // Kafka topics
+  val experienceTopic: String = config.getString("kafka.experienceTopic")
+
+  val brokers: String = config.getString("kafka.brokers")
+
   //Mongo configuration
   val dbName = configMongoDbname
   val database_profile = configProfileDbName

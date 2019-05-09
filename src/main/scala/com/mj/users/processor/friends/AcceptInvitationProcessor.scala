@@ -28,8 +28,8 @@ class AcceptInvitationProcessor extends Actor with MessageConfig {
              {
                updateUserConnections(Connections(invitationFriend.inviteeID,invitationFriend.memberID,invitationFriend.conn_type.get,"active"))}
           ).map(resp =>
-            origin ! responseMessage("", "", s"Connection request was successfully sent to ${invitationFriend.firstName}"))
-          case 0 => origin ! responseMessage("", s"Error found for email : ${invitationFriend.firstName}", "")
+            origin ! responseMessage("", "", s"You are now connected with ${invitationFriend.firstName}"))
+          case 0 => origin ! responseMessage("", s"Error found for : ${invitationFriend.firstName}", "")
         })
 
       result.recover {
