@@ -13,7 +13,8 @@ object EducationDao {
 
 
   val educationCollection: Future[BSONCollection] = db1.map(_.collection[BSONCollection]("education"))
-
+  
+  implicit def mediaWriter = Macros.handler[Media]
   implicit def educationeWriter = Macros.handler[Education]
 
   //insert user Details
@@ -28,6 +29,7 @@ object EducationDao {
           userRequest.start_year,
           userRequest.end_year,
           userRequest.activities,
+          userRequest.media,
           Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
           None
         )
@@ -47,6 +49,7 @@ object EducationDao {
       "start_year" -> exp.start_year,
       "end_year" -> exp.end_year,
       "activities" -> exp.activities,
+      "media" -> exp.media,
       "updated_date" -> Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ"))
 
     ))

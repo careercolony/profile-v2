@@ -21,6 +21,7 @@ class NewExperienceProcessor extends Actor with MessageConfig{
 
     case (experienceRequestDto: ExperienceRequest) => {
       val origin = sender()
+      println(experienceRequestDto)
       val result = insertNewExperience(experienceRequestDto).map(response =>
         origin ! response
       )

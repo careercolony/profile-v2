@@ -14,7 +14,7 @@ object ExperienceDao {
 
   val experienceCollection: Future[BSONCollection] = db1.map(_.collection[BSONCollection]("experience"))
 
-
+  implicit def mediaWriter = Macros.handler[Media]
   implicit def experienceWriter = Macros.handler[Experience]
 
 
@@ -36,7 +36,8 @@ object ExperienceDao {
           Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
           None,
           userRequest.current,
-          userRequest.industry
+          userRequest.industry,
+          userRequest.media
         )
       }
       response <- insert[Experience](experienceCollection, experienceData)
@@ -58,7 +59,8 @@ object ExperienceDao {
       "end_year" -> exp.end_year,
       "updated_date" -> Some(DateTime.now.toString("yyyy-MM-dd'T'HH:mm:ssZ")),
       "current" -> exp.current,
-      "industry" -> exp.industry
+      "industry" -> exp.industry,
+      "media"->exp.media
     ))
 
     update(experienceCollection, {

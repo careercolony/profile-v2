@@ -23,7 +23,7 @@ trait KafkaAccess {
   }
 
 
-  /*
+  /**
   def sendAccepedToKafka(accepted: String , topic : String): Unit = {
     import java.util.Properties
 

@@ -8,17 +8,21 @@ import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 import scala.collection.mutable.MutableList
 
 case class MultipleInvitation(memberID: String, connections: Option[List[ConnectionsDto]])
+
+// Media 
+case class Media(title:Option[String], description:Option[String], media_file:Option[String])
+
 //Experience
 case class ExperienceRequest( memberID: String, position:Option[String], career_level:Option[String], description:Option[String], employer: Option[String], start_month:Option[String],
-                              start_year:Option[String], end_month:Option[String], end_year:Option[String], current:Option[Boolean], industry: String)
+                              start_year:Option[String], end_month:Option[String], end_year:Option[String], current:Option[Boolean], industry: String, media:Option[Media])
 case class Experience(expID: String, status : String ,memberID: String, position:Option[String], career_level:Option[String], description:Option[String], employer: Option[String], start_month:Option[String],
-                         start_year:Option[String], end_month:Option[String], end_year:Option[String], created_date: Option[String], updated_date: Option[String], current:Option[Boolean], industry: String
+                         start_year:Option[String], end_month:Option[String], end_year:Option[String], created_date: Option[String], updated_date: Option[String], current:Option[Boolean], industry: String, media:Option[Media]
                         )
 
 //Education
-case class EducationRequest(memberID: String, school_name: Option[String], field_of_study:Option[String], degree: Option[String], start_year:Option[String], end_year:Option[String], activities: Option[String])
+case class EducationRequest(memberID: String, school_name: Option[String], field_of_study:Option[String], degree: Option[String], start_year:Option[String], end_year:Option[String], activities: Option[String], media:Option[Media])
 case class Education(eduID: String,  status : String , memberID: String, school_name: Option[String], field_of_study:Option[String], degree: Option[String],
-                        start_year:Option[String], end_year:Option[String],activities: Option[String], created_date: Option[String], updated_date:Option[String])
+                        start_year:Option[String], end_year:Option[String],activities: Option[String],  media:Option[Media], created_date: Option[String], updated_date:Option[String])
 
 
 //Portfolio
@@ -100,10 +104,11 @@ case class ContactInfo(address: String, city: String, state: String, country: St
 object JsonRepo extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val connectionsDtoFormats: RootJsonFormat[ConnectionsDto] = jsonFormat3(ConnectionsDto)
   implicit val multipleInvitationRequestDtoFormats: RootJsonFormat[MultipleInvitation] = jsonFormat2(MultipleInvitation)
-  implicit val experienceRequestDtoFormats: RootJsonFormat[ExperienceRequest] = jsonFormat11(ExperienceRequest)
-  implicit val experienceResponseDtoFormats: RootJsonFormat[Experience] = jsonFormat15(Experience)
-  implicit val educationRequestDtoFormats: RootJsonFormat[EducationRequest] = jsonFormat7(EducationRequest)
-  implicit val educationResponseDtoFormats: RootJsonFormat[Education] = jsonFormat11(Education)
+  implicit val mediaDtoFormats: RootJsonFormat[Media] = jsonFormat3(Media)
+  implicit val experienceRequestDtoFormats: RootJsonFormat[ExperienceRequest] = jsonFormat12(ExperienceRequest)
+  implicit val experienceResponseDtoFormats: RootJsonFormat[Experience] = jsonFormat16(Experience)
+  implicit val educationRequestDtoFormats: RootJsonFormat[EducationRequest] = jsonFormat8(EducationRequest)
+  implicit val educationResponseDtoFormats: RootJsonFormat[Education] = jsonFormat12(Education)
   implicit val portfolioRequestDtoFormats: RootJsonFormat[PortfolioRequest] = jsonFormat6(PortfolioRequest)
   implicit val portfolioResponseDtoFormats: RootJsonFormat[Portfolio] = jsonFormat10(Portfolio)
   implicit val certificationRequestDtoFormats: RootJsonFormat[CertificationRequest] = jsonFormat10(CertificationRequest)

@@ -19,6 +19,7 @@ object FriendsDao {
 
   implicit def contactStatusHandler = Macros.handler[ContactInfo]
 
+  implicit def mediaWriter = Macros.handler[Media]
 
   implicit def educationHandler = Macros.handler[Education]
 
